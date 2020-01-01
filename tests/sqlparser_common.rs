@@ -1113,7 +1113,15 @@ fn parse_alter_table_constraints() {
     check_one("CHECK (end_date > start_date OR end_date IS NULL)");
 
     fn check_one(constraint_text: &str) {
+        println!("constraint: {}", constraint_text);
         match verified_stmt(&format!("ALTER TABLE tab ADD {}", constraint_text)) {
+            Statement::AlterTable {
+                name,
+                operation: AlterTableOperation::AddColumn(column_def),
+            } => assert_eq!(
+                constraint_text,
+                format!("COLUMN {}", column_def.to_string())
+            ),
             Statement::AlterTable {
                 name,
                 operation: AlterTableOperation::AddConstraint(constraint),
@@ -1124,6 +1132,29 @@ fn parse_alter_table_constraints() {
             _ => unreachable!(),
         }
         verified_stmt(&format!("CREATE TABLE foo (id int, {})", constraint_text));
+    }
+}
+
+#[test]
+fn parse_alter_table_add_column() {
+    check_one("ADD COLUMN is_active boolean");
+    check_one("ADD COLUMN is_active boolean NOT NULL DEFAULT (false)");
+
+    fn check_one(constraint_text: &str) {
+        println!("constraint: {}", constraint_text);
+        match verified_stmt(&format!("ALTER TABLE tab {}", constraint_text)) {
+            Statement::AlterTable {
+                name,
+                operation: AlterTableOperation::AddColumn(column_def),
+            } => {
+                assert_eq!("tab", name.to_string());
+                assert_eq!(
+                    constraint_text,
+                    format!("ADD COLUMN {}", column_def.to_string())
+                )
+            }
+            _ => unreachable!(),
+        }
     }
 }
 

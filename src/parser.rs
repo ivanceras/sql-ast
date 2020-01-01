@@ -949,6 +949,37 @@ impl Parser {
         })
     }
 
+    fn parse_column_def(&mut self) -> Result<ColumnDef, ParserError> {
+        if let Some(Token::Word(column_name)) = self.peek_token() {
+            println!("It's a {}", column_name);
+            self.next_token();
+            let data_type = self.parse_data_type()?;
+            let collation = if self.parse_keyword("COLLATE") {
+                Some(self.parse_object_name()?)
+            } else {
+                None
+            };
+            let mut options = vec![];
+            loop {
+                match self.peek_token() {
+                    None | Some(Token::Comma) | Some(Token::RParen) => break,
+                    _ => options.push(self.parse_column_option_def()?),
+                }
+            }
+
+            Ok(ColumnDef {
+                name: column_name.to_ident(),
+                data_type,
+                collation,
+                options,
+            })
+        } else {
+            println!("not a valid column: {:?}", self.peek_token());
+
+            self.expected("column name", self.peek_token())
+        }
+    }
+
     fn parse_columns(&mut self) -> Result<(Vec<ColumnDef>, Vec<TableConstraint>), ParserError> {
         let mut columns = vec![];
         let mut constraints = vec![];
@@ -960,27 +991,7 @@ impl Parser {
             if let Some(constraint) = self.parse_optional_table_constraint()? {
                 constraints.push(constraint);
             } else if let Some(Token::Word(column_name)) = self.peek_token() {
-                self.next_token();
-                let data_type = self.parse_data_type()?;
-                let collation = if self.parse_keyword("COLLATE") {
-                    Some(self.parse_object_name()?)
-                } else {
-                    None
-                };
-                let mut options = vec![];
-                loop {
-                    match self.peek_token() {
-                        None | Some(Token::Comma) | Some(Token::RParen) => break,
-                        _ => options.push(self.parse_column_option_def()?),
-                    }
-                }
-
-                columns.push(ColumnDef {
-                    name: column_name.to_ident(),
-                    data_type,
-                    collation,
-                    options,
-                });
+                columns.push(self.parse_column_def()?);
             } else {
                 return self.expected("column name or constraint definition", self.peek_token());
             }
@@ -1106,7 +1117,11 @@ impl Parser {
         let _ = self.parse_keyword("ONLY");
         let table_name = self.parse_object_name()?;
         let operation = if self.parse_keyword("ADD") {
-            if let Some(constraint) = self.parse_optional_table_constraint()? {
+            if self.parse_keyword("COLUMN") {
+                println!("its a column: {:?} ", self.peek_token());
+                AlterTableOperation::AddColumn(self.parse_column_def()?)
+            } else if let Some(constraint) = self.parse_optional_table_constraint()? {
+                println!("its a constraint: {:?} ", self.peek_token());
                 AlterTableOperation::AddConstraint(constraint)
             } else {
                 return self.expected("a constraint in ALTER TABLE .. ADD", self.peek_token());

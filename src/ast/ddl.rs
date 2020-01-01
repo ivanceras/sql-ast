@@ -18,15 +18,19 @@ use std::fmt;
 /// An `ALTER TABLE` (`Statement::AlterTable`) operation
 #[derive(Debug, Clone, PartialEq, Eq, Hash)]
 pub enum AlterTableOperation {
+    AddColumn(ColumnDef),
     /// `ADD <table_constraint>`
     AddConstraint(TableConstraint),
     /// TODO: implement `DROP CONSTRAINT <name>`
-    DropConstraint { name: Ident },
+    DropConstraint {
+        name: Ident,
+    },
 }
 
 impl fmt::Display for AlterTableOperation {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         match self {
+            AlterTableOperation::AddColumn(column_def) => write!(f, "ADD COLUMN {}", column_def),
             AlterTableOperation::AddConstraint(c) => write!(f, "ADD {}", c),
             AlterTableOperation::DropConstraint { name } => write!(f, "DROP CONSTRAINT {}", name),
         }
