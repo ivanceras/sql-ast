@@ -1113,7 +1113,6 @@ fn parse_alter_table_constraints() {
     check_one("CHECK (end_date > start_date OR end_date IS NULL)");
 
     fn check_one(constraint_text: &str) {
-        println!("constraint: {}", constraint_text);
         match verified_stmt(&format!("ALTER TABLE tab ADD {}", constraint_text)) {
             Statement::AlterTable {
                 name,
@@ -1141,7 +1140,6 @@ fn parse_alter_table_add_column() {
     check_one("ADD COLUMN is_active boolean NOT NULL DEFAULT (false)");
 
     fn check_one(constraint_text: &str) {
-        println!("constraint: {}", constraint_text);
         match verified_stmt(&format!("ALTER TABLE tab {}", constraint_text)) {
             Statement::AlterTable {
                 name,

@@ -951,7 +951,6 @@ impl Parser {
 
     fn parse_column_def(&mut self) -> Result<ColumnDef, ParserError> {
         if let Some(Token::Word(column_name)) = self.peek_token() {
-            println!("It's a {}", column_name);
             self.next_token();
             let data_type = self.parse_data_type()?;
             let collation = if self.parse_keyword("COLLATE") {
@@ -974,8 +973,6 @@ impl Parser {
                 options,
             })
         } else {
-            println!("not a valid column: {:?}", self.peek_token());
-
             self.expected("column name", self.peek_token())
         }
     }
@@ -1118,10 +1115,8 @@ impl Parser {
         let table_name = self.parse_object_name()?;
         let operation = if self.parse_keyword("ADD") {
             if self.parse_keyword("COLUMN") {
-                println!("its a column: {:?} ", self.peek_token());
                 AlterTableOperation::AddColumn(self.parse_column_def()?)
             } else if let Some(constraint) = self.parse_optional_table_constraint()? {
-                println!("its a constraint: {:?} ", self.peek_token());
                 AlterTableOperation::AddConstraint(constraint)
             } else {
                 return self.expected("a constraint in ALTER TABLE .. ADD", self.peek_token());
