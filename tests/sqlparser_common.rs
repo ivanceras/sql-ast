@@ -1116,13 +1116,6 @@ fn parse_alter_table_constraints() {
         match verified_stmt(&format!("ALTER TABLE tab ADD {}", constraint_text)) {
             Statement::AlterTable {
                 name,
-                operation: AlterTableOperation::AddColumn(column_def),
-            } => assert_eq!(
-                constraint_text,
-                format!("COLUMN {}", column_def.to_string())
-            ),
-            Statement::AlterTable {
-                name,
                 operation: AlterTableOperation::AddConstraint(constraint),
             } => {
                 assert_eq!("tab", name.to_string());
