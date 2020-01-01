@@ -987,7 +987,7 @@ impl Parser {
         loop {
             if let Some(constraint) = self.parse_optional_table_constraint()? {
                 constraints.push(constraint);
-            } else if let Some(Token::Word(column_name)) = self.peek_token() {
+            } else if let Some(Token::Word(_column_name)) = self.peek_token() {
                 columns.push(self.parse_column_def()?);
             } else {
                 return self.expected("column name or constraint definition", self.peek_token());
