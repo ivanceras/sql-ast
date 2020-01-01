@@ -1119,10 +1119,34 @@ impl Parser {
             } else if let Some(constraint) = self.parse_optional_table_constraint()? {
                 AlterTableOperation::AddConstraint(constraint)
             } else {
-                return self.expected("a constraint in ALTER TABLE .. ADD", self.peek_token());
+                return self.expected(
+                    "a column or a constraint in ALTER TABLE .. ADD",
+                    self.peek_token(),
+                );
+            }
+        } else if self.parse_keyword("DROP") {
+            if self.parse_keyword("COLUMN") {
+                let if_exists = if self.parse_keywords(vec!["IF", "EXISTS"]) {
+                    true
+                } else {
+                    false
+                };
+                let column = self.parse_identifier()?;
+                let cascade = if self.parse_keyword("CASCADE") {
+                    true
+                } else {
+                    false
+                };
+                AlterTableOperation::DropColumn {
+                    column,
+                    if_exists,
+                    cascade,
+                }
+            } else {
+                return self.expected("a column in ALTER TABLE .. DROP", self.peek_token());
             }
         } else {
-            return self.expected("ADD after ALTER TABLE", self.peek_token());
+            return self.expected("ADD or DROP after ALTER TABLE", self.peek_token());
         };
         Ok(Statement::AlterTable {
             name: table_name,

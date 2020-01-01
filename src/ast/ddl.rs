@@ -21,6 +21,11 @@ pub enum AlterTableOperation {
     AddColumn(ColumnDef),
     /// `ADD <table_constraint>`
     AddConstraint(TableConstraint),
+    DropColumn {
+        column: Ident,
+        if_exists: bool,
+        cascade: bool,
+    },
     /// TODO: implement `DROP CONSTRAINT <name>`
     DropConstraint {
         name: Ident,
@@ -32,6 +37,17 @@ impl fmt::Display for AlterTableOperation {
         match self {
             AlterTableOperation::AddColumn(column_def) => write!(f, "ADD COLUMN {}", column_def),
             AlterTableOperation::AddConstraint(c) => write!(f, "ADD {}", c),
+            AlterTableOperation::DropColumn {
+                column,
+                if_exists,
+                cascade,
+            } => write!(
+                f,
+                "DROP COLUMN {}{} {}",
+                if *if_exists { "IF EXISTS " } else { " " },
+                column,
+                if *cascade { "CASCADE" } else { "" }
+            ),
             AlterTableOperation::DropConstraint { name } => write!(f, "DROP CONSTRAINT {}", name),
         }
     }
