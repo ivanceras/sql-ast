@@ -1,22 +1,18 @@
 [package]
-name = "sqlparser"
-description = "Extensible SQL Lexer and Parser with support for ANSI SQL:2011"
-version = "0.5.1-alpha-0"
-authors = ["Andy Grove <andygrove73@gmail.com>"]
-homepage = "https://github.com/andygrove/sqlparser-rs"
-documentation = "https://docs.rs/sqlparser/"
+name = "sql-ast"
+description = "A fork of sqlparser-rs, with unreleased features"
+version = "0.5.1-alpha-1"
+authors = ["Andy Grove <andygrove73@gmail.com>", "Jovansonlee Cesar <ivanceras@gmail.com>"]
+homepage = "https://github.com/ivanceras/sqlparser-preview"
+documentation = "https://docs.rs/sql-ast"
 keywords = [ "ansi", "sql", "lexer", "parser" ]
-repository = "https://github.com/andygrove/sqlparser-rs"
+repository = "https://github.com/ivanceras/sql-ast"
 license = "Apache-2.0"
 include = [
     "src/**/*.rs",
     "Cargo.toml",
 ]
 edition = "2018"
-
-[lib]
-name = "sqlparser"
-path = "src/lib.rs"
 
 [dependencies]
 bigdecimal = { version = "0.1.0", optional = true }
