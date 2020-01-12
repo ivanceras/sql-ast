@@ -14,14 +14,14 @@
 //! Test SQL syntax specific to PostgreSQL. The parser based on the
 //! generic dialect is also tested (on the inputs it can handle).
 
-use sqlparser::ast::*;
-use sqlparser::dialect::{GenericDialect, PostgreSqlDialect};
-use sqlparser::parser::ParserError;
-use sqlparser::test_utils::*;
+use sql_ast::ast::*;
+use sql_ast::dialect::{GenericDialect, PostgreSqlDialect};
+use sql_ast::parser::ParserError;
+use sql_ast::test_utils::*;
 
 #[test]
 fn parse_create_table_with_defaults() {
-    let sql = "CREATE TABLE public.customer (
+    let sql = "CREATE TABLE IF NOT EXISTS public.customer (
             customer_id integer DEFAULT nextval(public.customer_customer_id_seq),
             store_id smallint NOT NULL,
             first_name character varying(45) NOT NULL,
@@ -35,6 +35,7 @@ fn parse_create_table_with_defaults() {
     ) WITH (fillfactor = 20, user_catalog_table = true, autovacuum_vacuum_threshold = 100)";
     match pg_and_generic().one_statement_parses_to(sql, "") {
         Statement::CreateTable {
+            if_not_exists,
             name,
             columns,
             constraints,
@@ -44,6 +45,7 @@ fn parse_create_table_with_defaults() {
             location: None,
         } => {
             assert_eq!("public.customer", name.to_string());
+            assert_eq!(if_not_exists, true);
             assert_eq!(
                 columns,
                 vec![

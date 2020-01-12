@@ -465,6 +465,7 @@ pub enum Statement {
     },
     /// CREATE TABLE
     CreateTable {
+        if_not_exists: bool,
         /// Table name
         name: ObjectName,
         /// Optional schema
@@ -620,6 +621,7 @@ impl fmt::Display for Statement {
             }
             Statement::CreateTable {
                 name,
+                if_not_exists,
                 columns,
                 constraints,
                 with_options,
@@ -629,8 +631,9 @@ impl fmt::Display for Statement {
             } => {
                 write!(
                     f,
-                    "CREATE {}TABLE {} ({}",
+                    "CREATE {}{}TABLE {} ({}",
                     if *external { "EXTERNAL " } else { "" },
+                    if *if_not_exists { "IF NOT EXISTS" } else { "" },
                     name,
                     display_comma_separated(columns)
                 )?;

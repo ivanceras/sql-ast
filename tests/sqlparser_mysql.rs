@@ -15,9 +15,9 @@
 //! Test SQL syntax specific to MySQL. The parser based on the generic dialect
 //! is also tested (on the inputs it can handle).
 
-use sqlparser::ast::*;
-use sqlparser::dialect::{GenericDialect, MySqlDialect};
-use sqlparser::test_utils::*;
+use sql_ast::ast::*;
+use sql_ast::dialect::{GenericDialect, MySqlDialect};
+use sql_ast::test_utils::*;
 
 #[test]
 fn parse_identifiers() {

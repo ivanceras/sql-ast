@@ -11,18 +11,18 @@
 // limitations under the License.
 
 #![warn(clippy::all)]
-//! Test SQL syntax, which all sqlparser dialects must parse in the same way.
+//! Test SQL syntax, which all sql_ast dialects must parse in the same way.
 //!
 //! Note that it does not mean all SQL here is valid in all the dialects, only
 //! that 1) it's either standard or widely supported and 2) it can be parsed by
-//! sqlparser regardless of the chosen dialect (i.e. it doesn't conflict with
+//! sql_ast regardless of the chosen dialect (i.e. it doesn't conflict with
 //! dialect-specific parsing rules).
 
 use matches::assert_matches;
 
-use sqlparser::ast::*;
-use sqlparser::parser::*;
-use sqlparser::test_utils::{all_dialects, expr_from_projection, number, only};
+use sql_ast::ast::*;
+use sql_ast::parser::*;
+use sql_ast::test_utils::{all_dialects, expr_from_projection, number, only};
 
 #[test]
 fn parse_insert_values() {
@@ -906,6 +906,7 @@ fn parse_create_table() {
     match ast {
         Statement::CreateTable {
             name,
+            if_not_exists,
             columns,
             constraints,
             with_options,
@@ -914,6 +915,7 @@ fn parse_create_table() {
             location: None,
         } => {
             assert_eq!("uk_cities", name.to_string());
+            assert_eq!(if_not_exists, false);
             assert_eq!(
                 columns,
                 vec![
@@ -989,10 +991,11 @@ fn parse_create_table() {
     }
 
     let res = parse_sql_statements("CREATE TABLE t (a int NOT NULL GARBAGE)");
-    assert!(res
-        .unwrap_err()
-        .to_string()
-        .contains("Expected column option, found: GARBAGE"));
+    assert!(
+        res.unwrap_err()
+            .to_string()
+            .contains("Expected column option, found: GARBAGE")
+    );
 }
 
 #[test]
@@ -1041,6 +1044,7 @@ fn parse_create_external_table() {
     );
     match ast {
         Statement::CreateTable {
+            if_not_exists,
             name,
             columns,
             constraints,
@@ -1050,6 +1054,7 @@ fn parse_create_external_table() {
             location,
         } => {
             assert_eq!("uk_cities", name.to_string());
+            assert_eq!(if_not_exists, false);
             assert_eq!(
                 columns,
                 vec![
@@ -2023,7 +2028,9 @@ fn parse_union() {
     verified_stmt("SELECT 1 UNION (SELECT 2 ORDER BY 1 LIMIT 1)");
     verified_stmt("SELECT 1 UNION SELECT 2 INTERSECT SELECT 3"); // Union[1, Intersect[2,3]]
     verified_stmt("SELECT foo FROM tab UNION SELECT bar FROM TAB");
-    verified_stmt("(SELECT * FROM new EXCEPT SELECT * FROM old) UNION ALL (SELECT * FROM old EXCEPT SELECT * FROM new) ORDER BY 1");
+    verified_stmt(
+        "(SELECT * FROM new EXCEPT SELECT * FROM old) UNION ALL (SELECT * FROM old EXCEPT SELECT * FROM new) ORDER BY 1",
+    );
 }
 
 #[test]
@@ -2383,7 +2390,9 @@ fn parse_fetch() {
         },
         _ => panic!("Test broke"),
     }
-    let ast = verified_query("SELECT foo FROM (SELECT * FROM bar OFFSET 2 ROWS FETCH FIRST 2 ROWS ONLY) OFFSET 2 ROWS FETCH FIRST 2 ROWS ONLY");
+    let ast = verified_query(
+        "SELECT foo FROM (SELECT * FROM bar OFFSET 2 ROWS FETCH FIRST 2 ROWS ONLY) OFFSET 2 ROWS FETCH FIRST 2 ROWS ONLY",
+    );
     assert_eq!(ast.offset, Some(Expr::Value(number("2"))));
     assert_eq!(ast.fetch, fetch_first_two_rows_only);
     match ast.body {
@@ -2518,7 +2527,7 @@ fn parse_start_transaction() {
     verified_stmt("START TRANSACTION ISOLATION LEVEL REPEATABLE READ");
     verified_stmt("START TRANSACTION ISOLATION LEVEL SERIALIZABLE");
 
-    // Regression test for https://github.com/andygrove/sqlparser-rs/pull/139,
+    // Regression test for https://github.com/andygrove/sql_ast-rs/pull/139,
     // in which START TRANSACTION would fail to parse if followed by a statement
     // terminator.
     assert_eq!(

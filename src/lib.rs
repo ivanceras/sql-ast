@@ -18,8 +18,8 @@
 //! into an Abstract Syntax Tree (AST).
 //!
 //! ```
-//! use sqlparser::dialect::GenericDialect;
-//! use sqlparser::parser::Parser;
+//! use sql_ast::dialect::GenericDialect;
+//! use sql_ast::parser::Parser;
 //!
 //! let dialect = GenericDialect {}; // or AnsiDialect
 //!

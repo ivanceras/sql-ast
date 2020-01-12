@@ -18,8 +18,8 @@ use simple_logger;
 /// Run with `cargo run --example cli`
 use std::fs;
 
-use sqlparser::dialect::*;
-use sqlparser::parser::Parser;
+use sql_ast::dialect::*;
+use sql_ast::parser::Parser;
 
 fn main() {
     simple_logger::init().unwrap();
