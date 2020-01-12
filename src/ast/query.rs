@@ -69,6 +69,7 @@ pub enum SetExpr {
         right: Box<SetExpr>,
     },
     Values(Values),
+    ParameterizedValue(Vec<usize>),
     // TODO: ANSI SQL supports `TABLE` here.
 }
 
@@ -87,6 +88,15 @@ impl fmt::Display for SetExpr {
                 let all_str = if *all { " ALL" } else { "" };
                 write!(f, "{} {}{} {}", left, op, all_str, right)
             }
+            SetExpr::ParameterizedValue(params) => write!(
+                f,
+                "VALUES({})",
+                params
+                    .iter()
+                    .map(|i| format!("${}", i))
+                    .collect::<Vec<String>>()
+                    .join(", ")
+            ),
         }
     }
 }
