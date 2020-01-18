@@ -631,9 +631,9 @@ impl fmt::Display for Statement {
             } => {
                 write!(
                     f,
-                    "CREATE {}{}TABLE {} ({}",
+                    "CREATE {}TABLE {}{} ({}",
                     if *external { "EXTERNAL " } else { "" },
-                    if *if_not_exists { "IF NOT EXISTS" } else { "" },
+                    if *if_not_exists { "IF NOT EXISTS " } else { "" },
                     name,
                     display_comma_separated(columns)
                 )?;
