@@ -33,6 +33,7 @@
 //! println!("AST: {:?}", ast);
 //! ```
 #![warn(clippy::all)]
+#![deny(warnings)]
 
 pub mod ast;
 pub mod dialect;
