@@ -1,7 +1,7 @@
 [package]
 name = "sql-ast"
-description = "A fork of sqlparser-rs, with unreleased features"
-version = "0.6.1"
+description = "A lean sql AST and parser"
+version = "0.7.0"
 authors = ["Andy Grove <andygrove73@gmail.com>", "Jovansonlee Cesar <ivanceras@gmail.com>"]
 homepage = "https://github.com/ivanceras/sqlparser-preview"
 documentation = "https://docs.rs/sql-ast"
