@@ -58,6 +58,8 @@ pub enum DataType {
     Regclass,
     /// Text
     Text,
+    /// Json type
+    Json,
     /// Bytea
     Bytea,
     /// Custom type such as enums
@@ -98,6 +100,7 @@ impl fmt::Display for DataType {
             DataType::Interval => write!(f, "interval"),
             DataType::Regclass => write!(f, "regclass"),
             DataType::Text => write!(f, "text"),
+            DataType::Json => write!(f, "json"),
             DataType::Bytea => write!(f, "bytea"),
             DataType::Array(ty) => write!(f, "{}[]", ty),
             DataType::Custom(ty) => write!(f, "{}", ty),
