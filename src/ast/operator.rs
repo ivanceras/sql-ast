@@ -47,6 +47,7 @@ pub enum BinaryOperator {
     And,
     Or,
     Like,
+    Ilike,
     NotLike,
 }
 
@@ -67,6 +68,7 @@ impl fmt::Display for BinaryOperator {
             BinaryOperator::And => "AND",
             BinaryOperator::Or => "OR",
             BinaryOperator::Like => "LIKE",
+            BinaryOperator::Ilike => "ILIKE",
             BinaryOperator::NotLike => "NOT LIKE",
         })
     }
