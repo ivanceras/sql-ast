@@ -57,6 +57,8 @@ pub enum Value {
     },
     /// `NULL` value
     Null,
+    /// use the default value
+    Default,
 }
 
 impl fmt::Display for Value {
@@ -113,6 +115,7 @@ impl fmt::Display for Value {
                 Ok(())
             }
             Value::Null => write!(f, "NULL"),
+            Value::Default => write!(f, "DEFAULT"),
         }
     }
 }
