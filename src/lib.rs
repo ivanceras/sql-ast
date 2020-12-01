@@ -39,6 +39,7 @@ pub mod ast;
 pub mod dialect;
 pub mod parser;
 pub mod tokenizer;
+pub use ast::Value;
 
 #[doc(hidden)]
 // This is required to make utilities accessible by both the crate-internal
