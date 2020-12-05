@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.7.4
+ - Add IN to binary operator
+ - Add Expr::ValueList
+
 ## 0.7.3
 - Add Default variant in Value AST
 - Expose Value in root crate
