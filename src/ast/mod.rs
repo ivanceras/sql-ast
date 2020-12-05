@@ -165,6 +165,7 @@ pub enum Expr {
         list: Vec<Expr>,
         negated: bool,
     },
+    ValueList(Vec<Expr>),
     /// `[ NOT ] IN (SELECT ...)`
     InSubquery {
         expr: Box<Expr>,
@@ -185,7 +186,10 @@ pub enum Expr {
         right: Box<Expr>,
     },
     /// Unary operation e.g. `NOT foo`
-    UnaryOp { op: UnaryOperator, expr: Box<Expr> },
+    UnaryOp {
+        op: UnaryOperator,
+        expr: Box<Expr>,
+    },
     /// CAST an expression to a different data type e.g. `CAST(foo AS VARCHAR(123))`
     Cast {
         expr: Box<Expr>,
@@ -245,6 +249,7 @@ impl fmt::Display for Expr {
                 if *negated { "NOT " } else { "" },
                 display_comma_separated(list)
             ),
+            Expr::ValueList(list) => write!(f, "({})", display_comma_separated(list)),
             Expr::InSubquery {
                 expr,
                 subquery,

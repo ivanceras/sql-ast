@@ -49,6 +49,7 @@ pub enum BinaryOperator {
     Like,
     Ilike,
     NotLike,
+    In,
 }
 
 impl fmt::Display for BinaryOperator {
@@ -70,6 +71,7 @@ impl fmt::Display for BinaryOperator {
             BinaryOperator::Like => "LIKE",
             BinaryOperator::Ilike => "ILIKE",
             BinaryOperator::NotLike => "NOT LIKE",
+            BinaryOperator::In => "IN",
         })
     }
 }
