@@ -43,7 +43,7 @@ impl fmt::Display for Query {
             write!(f, " LIMIT {}", limit)?;
         }
         if let Some(ref offset) = self.offset {
-            write!(f, " OFFSET {} ROWS", offset)?;
+            write!(f, " OFFSET {}", offset)?;
         }
         if let Some(ref fetch) = self.fetch {
             write!(f, " {}", fetch)?;
