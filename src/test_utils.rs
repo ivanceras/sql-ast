@@ -66,6 +66,7 @@ impl TestedDialects {
     /// Ensures that `sql` parses as a single statement, optionally checking
     /// that converting AST back to string equals to `canonical` (unless an
     /// empty canonical string is provided).
+    #[track_caller]
     pub fn one_statement_parses_to(&self, sql: &str, canonical: &str) -> Statement {
         let mut statements = self.parse_sql_statements(&sql).unwrap();
         assert_eq!(statements.len(), 1);
@@ -79,12 +80,14 @@ impl TestedDialects {
 
     /// Ensures that `sql` parses as a single [Statement], and is not modified
     /// after a serialization round-trip.
+    #[track_caller]
     pub fn verified_stmt(&self, query: &str) -> Statement {
         self.one_statement_parses_to(query, query)
     }
 
     /// Ensures that `sql` parses as a single [Query], and is not modified
     /// after a serialization round-trip.
+    #[track_caller]
     pub fn verified_query(&self, sql: &str) -> Query {
         match self.verified_stmt(sql) {
             Statement::Query(query) => *query,

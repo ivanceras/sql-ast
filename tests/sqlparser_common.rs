@@ -2091,10 +2091,10 @@ fn parse_scalar_subqueries() {
     assert_matches!(
         verified_expr(sql),
         Expr::BinaryOp {
-        op: BinaryOperator::Plus, ..
-        //left: box Subquery { .. },
-        //right: box Subquery { .. },
-    }
+            op: BinaryOperator::Plus,
+            .. //left: box Subquery { .. },
+               //right: box Subquery { .. },
+        }
     );
 }
 
@@ -2305,7 +2305,7 @@ fn parse_invalid_subquery_without_parens() {
 
 #[test]
 fn parse_offset() {
-    let ast = verified_query("SELECT foo FROM bar OFFSET 2 ROWS");
+    let ast = verified_query("SELECT foo FROM bar OFFSET 2");
     assert_eq!(ast.offset, Some(Expr::Value(number("2"))));
     let ast = verified_query("SELECT foo FROM bar WHERE foo = 4 OFFSET 2 ROWS");
     assert_eq!(ast.offset, Some(Expr::Value(number("2"))));
@@ -2331,8 +2331,8 @@ fn parse_offset() {
 #[test]
 fn parse_singular_row_offset() {
     one_statement_parses_to(
-        "SELECT foo FROM bar OFFSET 1 ROW",
-        "SELECT foo FROM bar OFFSET 1 ROWS",
+        "SELECT foo FROM bar OFFSET 1",
+        "SELECT foo FROM bar OFFSET 1",
     );
 }
 
@@ -2381,7 +2381,7 @@ fn parse_fetch() {
         })
     );
     let ast = verified_query(
-        "SELECT foo FROM bar WHERE foo = 4 ORDER BY baz OFFSET 2 ROWS FETCH FIRST 2 ROWS ONLY",
+        "SELECT foo FROM bar WHERE foo = 4 ORDER BY baz OFFSET 2 FETCH FIRST 2 ROWS ONLY",
     );
     assert_eq!(ast.offset, Some(Expr::Value(number("2"))));
     assert_eq!(ast.fetch, fetch_first_two_rows_only);
@@ -2634,26 +2634,32 @@ fn ensure_multiple_dialects_are_tested() {
     let _ = parse_sql_statements("SELECT @foo");
 }
 
+#[track_caller]
 fn parse_sql_statements(sql: &str) -> Result<Vec<Statement>, ParserError> {
     all_dialects().parse_sql_statements(sql)
 }
 
+#[track_caller]
 fn one_statement_parses_to(sql: &str, canonical: &str) -> Statement {
     all_dialects().one_statement_parses_to(sql, canonical)
 }
 
+#[track_caller]
 fn verified_stmt(query: &str) -> Statement {
     all_dialects().verified_stmt(query)
 }
 
+#[track_caller]
 fn verified_query(query: &str) -> Query {
     all_dialects().verified_query(query)
 }
 
+#[track_caller]
 fn verified_only_select(query: &str) -> Select {
     all_dialects().verified_only_select(query)
 }
 
+#[track_caller]
 fn verified_expr(query: &str) -> Expr {
     all_dialects().verified_expr(query)
 }
