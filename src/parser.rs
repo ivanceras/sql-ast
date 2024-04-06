@@ -1950,7 +1950,6 @@ impl Parser {
         })?;
         Ok(Values(values))
     }
-
 }
 
 impl Word {

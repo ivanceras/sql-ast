@@ -2494,8 +2494,6 @@ fn lateral_derived() {
     );
 }
 
-
-
 #[track_caller]
 fn parse_sql_statements(sql: &str) -> Result<Vec<Statement>, ParserError> {
     all_dialects().parse_sql_statements(sql)

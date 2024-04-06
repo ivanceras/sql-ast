@@ -764,5 +764,3 @@ impl fmt::Display for SqlOption {
         write!(f, "{} = {}", self.name, self.value)
     }
 }
-
-

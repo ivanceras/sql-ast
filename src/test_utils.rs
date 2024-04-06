@@ -113,9 +113,7 @@ impl TestedDialects {
 
 pub fn all_dialects() -> TestedDialects {
     TestedDialects {
-        dialects: vec![
-            Box::new(GenericDialect {}),
-        ],
+        dialects: vec![Box::new(GenericDialect {})],
     }
 }
 
