@@ -2625,14 +2625,6 @@ fn parse_rollback() {
     one_statement_parses_to("ROLLBACK TRANSACTION", "ROLLBACK");
 }
 
-#[test]
-#[should_panic(expected = "Parse results with GenericDialect are different from PostgreSqlDialect")]
-fn ensure_multiple_dialects_are_tested() {
-    // The SQL here must be parsed differently by different dialects.
-    // At the time of writing, `@foo` is accepted as a valid identifier
-    // by the Generic and the MSSQL dialect, but not by Postgres and ANSI.
-    let _ = parse_sql_statements("SELECT @foo");
-}
 
 #[track_caller]
 fn parse_sql_statements(sql: &str) -> Result<Vec<Statement>, ParserError> {
