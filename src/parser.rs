@@ -1951,43 +1951,6 @@ impl Parser {
         Ok(Values(values))
     }
 
-
-    pub fn parse_transaction_modes(&mut self) -> Result<Vec<TransactionMode>, ParserError> {
-        let mut modes = vec![];
-        let mut required = false;
-        loop {
-            let mode = if self.parse_keywords(vec!["ISOLATION", "LEVEL"]) {
-                let iso_level = if self.parse_keywords(vec!["READ", "UNCOMMITTED"]) {
-                    TransactionIsolationLevel::ReadUncommitted
-                } else if self.parse_keywords(vec!["READ", "COMMITTED"]) {
-                    TransactionIsolationLevel::ReadCommitted
-                } else if self.parse_keywords(vec!["REPEATABLE", "READ"]) {
-                    TransactionIsolationLevel::RepeatableRead
-                } else if self.parse_keyword("SERIALIZABLE") {
-                    TransactionIsolationLevel::Serializable
-                } else {
-                    self.expected("isolation level", self.peek_token())?
-                };
-                TransactionMode::IsolationLevel(iso_level)
-            } else if self.parse_keywords(vec!["READ", "ONLY"]) {
-                TransactionMode::AccessMode(TransactionAccessMode::ReadOnly)
-            } else if self.parse_keywords(vec!["READ", "WRITE"]) {
-                TransactionMode::AccessMode(TransactionAccessMode::ReadWrite)
-            } else if required {
-                self.expected("transaction mode", self.peek_token())?
-            } else {
-                break;
-            };
-            modes.push(mode);
-            // ANSI requires a comma after each transaction mode, but
-            // PostgreSQL, for historical reasons, does not. We follow
-            // PostgreSQL in making the comma optional, since that is strictly
-            // more general.
-            required = self.consume_token(&Token::Comma);
-        }
-        Ok(modes)
-    }
-
 }
 
 impl Word {
