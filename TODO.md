@@ -1,7 +1,7 @@
 # TODO
 - [ ] Remove advance queries
-    - [ ] Transactions
-    - [ ] Roolback
-    - [ ] Commit
-    - [ ] Set variable, show variables, show columns,
+    - [X] Transactions
+    - [X] Rollback
+    - [X] Commit
+    - [X] Set variable, show variables, show columns,
 
