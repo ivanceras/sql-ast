@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.8.0
+- Remove dialects except for GenericDialect
+- remove transaction related query: commit, rollback
+- remove set variable and show columns query
+
 ## 0.7.5
 - update bigdecimal to latest version
 
