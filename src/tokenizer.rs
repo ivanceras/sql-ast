@@ -137,7 +137,7 @@ impl Token {
         //TODO: need to reintroduce FnvHashSet at some point .. iterating over keywords is
         // not fast but I want the simplicity for now while I experiment with pluggable
         // dialects
-        let is_keyword = quote_style == None && ALL_KEYWORDS.contains(&word_uppercase.as_str());
+        let is_keyword = quote_style.is_none() && ALL_KEYWORDS.contains(&word_uppercase.as_str());
         Token::Word(Word {
             value: word.to_string(),
             quote_style,
@@ -245,8 +245,8 @@ impl<'a> Tokenizer<'a> {
                 }
 
                 Token::Whitespace(Whitespace::Tab) => self.col += 4,
-                Token::Word(w) if w.quote_style == None => self.col += w.value.len() as u64,
-                Token::Word(w) if w.quote_style != None => self.col += w.value.len() as u64 + 2,
+                Token::Word(w) if w.quote_style.is_none() => self.col += w.value.len() as u64,
+                Token::Word(w) if w.quote_style.is_some() => self.col += w.value.len() as u64 + 2,
                 Token::Number(s) => self.col += s.len() as u64,
                 Token::SingleQuotedString(s) => self.col += s.len() as u64,
                 _ => self.col += 1,
@@ -333,10 +333,7 @@ impl<'a> Tokenizer<'a> {
                 // numbers
                 '0'..='9' => {
                     // TODO: https://jakewheat.github.io/sql-overview/sql-2011-foundation-grammar.html#unsigned-numeric-literal
-                    let s = peeking_take_while(chars, |ch| match ch {
-                        '0'..='9' | '.' => true,
-                        _ => false,
-                    });
+                    let s = peeking_take_while(chars, |ch| matches!(ch, '0'..='9' | '.'));
                     Ok(Some(Token::Number(s)))
                 }
                 // punctuation

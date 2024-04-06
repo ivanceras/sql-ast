@@ -66,7 +66,7 @@ impl TestedDialects {
     /// empty canonical string is provided).
     #[track_caller]
     pub fn one_statement_parses_to(&self, sql: &str, canonical: &str) -> Statement {
-        let mut statements = self.parse_sql_statements(&sql).unwrap();
+        let mut statements = self.parse_sql_statements(sql).unwrap();
         assert_eq!(statements.len(), 1);
 
         let only_statement = statements.pop().unwrap();

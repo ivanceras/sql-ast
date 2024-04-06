@@ -113,7 +113,7 @@ impl Parser {
     pub fn parse_statement(&mut self) -> Result<Statement, ParserError> {
         match self.next_token() {
             Some(t) => match t {
-                Token::Word(ref w) if w.keyword != "" => match w.keyword.as_ref() {
+                Token::Word(ref w) if !w.keyword.is_empty() => match w.keyword.as_ref() {
                     "SELECT" | "WITH" | "VALUES" => {
                         self.prev_token();
                         Ok(Statement::Query(Box::new(self.parse_query()?)))
@@ -741,7 +741,7 @@ impl Parser {
     pub fn parse_keywords(&mut self, keywords: Vec<&'static str>) -> bool {
         let index = self.index;
         for keyword in keywords {
-            if !self.parse_keyword(&keyword) {
+            if !self.parse_keyword(keyword) {
                 //println!("parse_keywords aborting .. did not find {}", keyword);
                 // reset index and return immediately
                 self.index = index;
@@ -774,7 +774,6 @@ impl Parser {
     }
 
     /// Bail out if the current token is not one of the expected keywords, or consume it if it is
-    #[must_use]
     pub fn expect_one_of_keywords(
         &mut self,
         keywords: &[&'static str],
@@ -1120,17 +1119,9 @@ impl Parser {
             }
         } else if self.parse_keyword("DROP") {
             if self.parse_keyword("COLUMN") {
-                let if_exists = if self.parse_keywords(vec!["IF", "EXISTS"]) {
-                    true
-                } else {
-                    false
-                };
+                let if_exists = self.parse_keywords(vec!["IF", "EXISTS"]);
                 let column = self.parse_identifier()?;
-                let cascade = if self.parse_keyword("CASCADE") {
-                    true
-                } else {
-                    false
-                };
+                let cascade = self.parse_keyword("CASCADE");
                 AlterTableOperation::DropColumn {
                     column,
                     if_exists,
@@ -1213,7 +1204,7 @@ impl Parser {
                     "FALSE" => Ok(Value::Boolean(false)),
                     "NULL" => Ok(Value::Null),
                     _ => {
-                        return parser_err!(format!("No value parser for keyword {}", k.keyword));
+                        parser_err!(format!("No value parser for keyword {}", k.keyword))
                     }
                 },
                 // The call to n.parse() returns a bigdecimal when the
