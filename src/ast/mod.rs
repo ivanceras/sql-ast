@@ -499,37 +499,6 @@ pub enum Statement {
         /// `RESTRICT` or no drop behavior at all was specified.
         cascade: bool,
     },
-    /// SET <variable>
-    ///
-    /// Note: this is not a standard SQL statement, but it is supported by at
-    /// least MySQL and PostgreSQL. Not all MySQL-specific syntatic forms are
-    /// supported yet.
-    SetVariable {
-        local: bool,
-        variable: Ident,
-        value: SetVariableValue,
-    },
-    /// SHOW <variable>
-    ///
-    /// Note: this is a PostgreSQL-specific statement.
-    ShowVariable { variable: Ident },
-    /// SHOW COLUMNS
-    ///
-    /// Note: this is a MySQL-specific statement.
-    ShowColumns {
-        extended: bool,
-        full: bool,
-        table_name: ObjectName,
-        filter: Option<ShowStatementFilter>,
-    },
-    /// `{ BEGIN [ TRANSACTION | WORK ] | START TRANSACTION } ...`
-    StartTransaction { modes: Vec<TransactionMode> },
-    /// `SET TRANSACTION ...`
-    SetTransaction { modes: Vec<TransactionMode> },
-    /// `COMMIT [ TRANSACTION | WORK ] [ AND [ NO ] CHAIN ]`
-    Commit { chain: bool },
-    /// `ROLLBACK [ TRANSACTION | WORK ] [ AND [ NO ] CHAIN ]`
-    Rollback { chain: bool },
 }
 
 impl fmt::Display for Statement {
@@ -676,57 +645,6 @@ impl fmt::Display for Statement {
                 display_comma_separated(names),
                 if *cascade { " CASCADE" } else { "" },
             ),
-            Statement::SetVariable {
-                local,
-                variable,
-                value,
-            } => {
-                f.write_str("SET ")?;
-                if *local {
-                    f.write_str("LOCAL ")?;
-                }
-                write!(f, "{} = {}", variable, value)
-            }
-            Statement::ShowVariable { variable } => write!(f, "SHOW {}", variable),
-            Statement::ShowColumns {
-                extended,
-                full,
-                table_name,
-                filter,
-            } => {
-                f.write_str("SHOW ")?;
-                if *extended {
-                    f.write_str("EXTENDED ")?;
-                }
-                if *full {
-                    f.write_str("FULL ")?;
-                }
-                write!(f, "COLUMNS FROM {}", table_name)?;
-                if let Some(filter) = filter {
-                    write!(f, " {}", filter)?;
-                }
-                Ok(())
-            }
-            Statement::StartTransaction { modes } => {
-                write!(f, "START TRANSACTION")?;
-                if !modes.is_empty() {
-                    write!(f, " {}", display_comma_separated(modes))?;
-                }
-                Ok(())
-            }
-            Statement::SetTransaction { modes } => {
-                write!(f, "SET TRANSACTION")?;
-                if !modes.is_empty() {
-                    write!(f, " {}", display_comma_separated(modes))?;
-                }
-                Ok(())
-            }
-            Statement::Commit { chain } => {
-                write!(f, "COMMIT{}", if *chain { " AND CHAIN" } else { "" },)
-            }
-            Statement::Rollback { chain } => {
-                write!(f, "ROLLBACK{}", if *chain { " AND CHAIN" } else { "" },)
-            }
         }
     }
 }
