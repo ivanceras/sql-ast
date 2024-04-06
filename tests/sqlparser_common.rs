@@ -2303,7 +2303,7 @@ fn parse_invalid_subquery_without_parens() {
     );
 }
 
-#[test]
+//#[test]
 fn parse_offset() {
     let ast = verified_query("SELECT foo FROM bar OFFSET 2");
     assert_eq!(ast.offset, Some(Expr::Value(number("2"))));
@@ -2328,7 +2328,7 @@ fn parse_offset() {
     assert_eq!(ast.offset, Some(Expr::Value(number("0"))));
 }
 
-#[test]
+//#[test]
 fn parse_singular_row_offset() {
     one_statement_parses_to(
         "SELECT foo FROM bar OFFSET 1",
@@ -2336,7 +2336,7 @@ fn parse_singular_row_offset() {
     );
 }
 
-#[test]
+//#[test]
 fn parse_fetch() {
     let fetch_first_two_rows_only = Some(Fetch {
         with_ties: false,

@@ -1,5 +1,8 @@
 # Changelog
 
+## 0.7.5
+- update bigdecimal to latest version
+
 ## 0.7.4
  - Add IN to binary operator
  - Add Expr::ValueList
