@@ -25,5 +25,5 @@ fn main() {
 
     let ast = Parser::parse_sql(&dialect, sql.to_string()).unwrap();
 
-    println!("AST: {:?}", ast);
+    println!("AST: {:#?}", ast);
 }
