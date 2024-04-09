@@ -1,4 +1,7 @@
+
 # Extensible SQL Lexer and Parser for Rust
+
+## Archived, sql-ast is not in-used anymore. Sqlparser-rs offers a maintain and feature complete version
 
 [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
 [![Version](https://img.shields.io/crates/v/sql-ast.svg)](https://crates.io/crates/sql-ast)
